@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACKROOT - Communauté de Hackers Élite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #991b1b;
+            --text: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid var(--accent);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: 
+                typing 3.5s steps(40, end),
+                blink-caret .75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent) }
+        }
+        
+        .terminal {
+            background-color: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .terminal-header {
+            background-color: #334155;
+            padding: 8px 15px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .dot-red { background-color: #ef4444; }
+        .dot-yellow { background-color: #f59e0b; }
+        .dot-green { background-color: #10b981; }
+        
+        .terminal-body {
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            height: 300px;
+            overflow-y: auto;
+        }
+        
+        .command-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .prompt {
+            color: #10b981;
+            margin-right: 8px;
+        }
+        
+        .cursor {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 0 }
+            50% { opacity: 1 }
+            100% { opacity: 0 }
+        }
+        
+        .flip-card {
+            perspective: 1000px;
+        }
+        
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+        }
+        
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        
+        /* Sécurité avancée contre les inspecteurs */
+        #antiInspect {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .terminal-body {
+                height: 200px;
+                font-size: 12px;
+            }
+            
+            .typewriter {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Right-click now allowed for easier development -->
+    <style>
+        /* Allow text selection */
+        body {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+    </style>
+
+    <!-- Navigation -->
+    <nav class="bg-gray-900 border-b border-gray-800 py-4 sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="bg-red-600 w-4 h-4 rounded-full"></div>
+                <div class="bg-yellow-500 w-4 h-4 rounded-full"></div>
+                <div class="bg-green-500 w-4 h-4 rounded-full"></div>
+                <span class="text-white font-bold ml-2">BLACKROOT</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#accueil" class="text-gray-300 hover:text-white transition">Accueil</a>
+                <a href="#services" class="text-gray-300 hover:text-white transition">Services</a>
+                <a href="#membres" class="text-gray-300 hover:text-white transition">Membres</a>
+                <a href="#contact" class="text-gray-300 hover:text-white transition">Recrutement</a>
+                <a href="#login" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">Connexion Sécurisée</a>
+                <a href="#leadership" class="text-gray-300 hover:text-white transition">Leadership</a>
+                <a href="#money" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">Opportunités</a>
+            </div>
+            <button class="md:hidden text-white" id="mobileMenuButton">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+        <div class="md:hidden bg-gray-800 py-2 px-4 hidden" id="mobileMenu">
+            <a href="#accueil" class="block text-gray-300 hover:text-white py-2 transition">Accueil</a>
+            <a href="#services" class="block text-gray-300 hover:text-white py-2 transition">Services</a>
+            <a href="#membres" class="block text-gray-300 hover:text-white py-2 transition">Membres</a>
+            <a href="#contact" class="block text-gray-300 hover:text-white py-2 transition">Recrutement</a>
+            <a href="#login" class="block bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition text-center">Connexion Sécurisée</a>
+                <a href="#leadership" class="block text-gray-300 hover:text-white py-2 transition">Leadership</a>
+                <a href="#money" class="block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition text-center">Opportunités</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-black opacity-30"></div>
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7caf51f0-a419-4188-a890-f9063ef1bd39.png" alt="Portrait sombre d'un hacker anonyme avec masque numérique, fond de matrice codée en vert sur fond noir, représentant le cyberespace" class="w-full h-full object-cover">
+        </div>
+        
+        <div class="container mx-auto px-4 z-10 text-center">
+            <div class="flex justify-center mb-6">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/511fdedf-7b4b-4243-ac49-33d38bb7df6c.png" alt="Logo BLACKROOT - Symbole cryptique circulaire avec branches fractales rouges sur fond noir, représentant la connexion et la technologie élitiste" class="w-24 h-24 rounded-full border-2 border-red-600">
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 text-white">
+                <span class="text-red-600">BLACK</span>ROOT
+            </h1>
+            
+            <div class="typewriter text-xl md:text-2xl text-gray-300 mb-8">
+                Communauté Élite de Sécurité Offensive
+            </div>
+            
+            <div class="terminal max-w-4xl mx-auto mb-8">
+                <div class="terminal-header">
+                    <div class="terminal-dot dot-red"></div>
+                    <div class="terminal-dot dot-yellow"></div>
+                    <div class="terminal-dot dot-green"></div>
+                    <span class="text-gray-300 ml-2 text-sm">connect@blackroot:~</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="command-line">
+                        <span class="prompt">root@blackroot:~#</span> 
+                        <span class="text-white">init_system</span>
+                        <span class="cursor">_</span>
+                    </div>
+                    <div class="text-green-400 mb-2">Système BLACKROOT initialisé...</div>
+                    <div class="command-line">
+                        <span class="prompt">root@blackroot:~#</span> 
+                        <span class="text-white">check_auth</span>
+                        <span class="cursor">_</span>
+                    </div>
+                    <div class="text-green-400 mb-2">Authentification sécurisée active</div>
+                    <div class="command-line">
+                        <span class="prompt">root@blackroot:~#</span> 
+                        <span class="text-white">verify_secure_channel</span>
+                        <span class="cursor">_</span>
+                    </div>
+                    <div class="text-green-400 mb-2">Channel chiffré établi - Secure Shell 3.0</div>
+                    <div class="command-line">
+                        <span class="prompt">root@blackroot:~#</span> 
+                        <span class="text-white">connect_user_session</span>
+                        <span class="cursor">_</span>
+                    </div>
+                    <div class="text-green-400 mb-2">Bienvenue visiteur. Accès restreint détecté.</div>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#services" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded transition font-medium">Nos Services</a>
+                <a href="#contact" class="bg-transparent border border-white hover:bg-gray-800 text-white px-8 py-3 rounded transition font-medium">Rejoindre BLACKROOT</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Services <span class="text-red-600">Élite</span></h2>
+                <div class="w-24 h-1 bg-red-600 mx-auto mb-6"></div>
+                <p class="text-gray-400 max-w-3xl mx-auto">
+                    BLACKROOT offre des services de cybersécurité avancés pour les clients nécessitant une protection absolue ou des capacités offensives discrètes.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="flip-card">
+                    <div class="flip-card-inner bg-gray-800 rounded-lg overflow-hidden h-full">
+                        <div class="flip-card-front p-6">
+                            <div class="text-red-500 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Tests d'Intrusion Avancés</h3>
+                            <p class="text-gray-400">
+                                Évaluation approfondie des vulnérabilités avec techniques avancées d'exploitation.
+                            </p>
+                        </div>
+                        <div class="flip-card-back bg-gray-700 p-6 absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <p class="text-gray-300 mb-4">
+                                    Nos pentesters utilisent des méthodologies propriétaires pour identifier les faiblesses avant les adversaires.
+                                </p>
+                                <ul class="text-sm text-gray-400 text-left">
+                                    <li class="mb-2">• Analyse des 0-day</li>
+                                    <li class="mb-2">• Social Engineering</li>
+                                    <li class="mb-2">• Physical Security Testing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service 2 -->
+                <div class="flip-card">
+                    <div class="flip-card-inner bg-gray-800 rounded-lg overflow-hidden h-full">
+                        <div class="flip-card-front p-6">
+                            <div class="text-red-500 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Cyber Investigation</h3>
+                            <p class="text-gray-400">
+                                Enquêtes numériques discrètes et analyses médico-légales avancées.
+                            </p>
+                        </div>
+                        <div class="flip-card-back bg-gray-700 p-6 absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <p class="text-gray-300 mb-4">
+                                    Nos outils forensiques maison permettent de retrouver des données même après suppression sécurisée.
+                                </p>
+                                <ul class="text-sm text-gray-400 text-left">
+                                    <li class="mb-2">• Récupération de données perdues</li>
+                                    <li class="mb-2">• Analyse de malware</li>
+                                    <li class="mb-2">• Enquêtes sur dark web</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service 3 -->
+                <div class="flip-card">
+                    <div class="flip-card-inner bg-gray-800 rounded-lg overflow-hidden h-full">
+                        <div class="flip-card-front p-6">
+                            <div class="text-red-500 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Formation Élite</h3>
+                            <p class="text-gray-400">
+                                Programmes de formation exclusifs réservés aux membres BLACKROOT.
+                            </p>
+                        </div>
+                        <div class="flip-card-back bg-gray-700 p-6 absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <p class="text-gray-300 mb-4">
+                                    Accès à nos laboratoires virtuels et cours avancés sur des techniques non documentées.
+                                </p>
+                                <ul class="text-sm text-gray-400 text-left">
+                                    <li class="mb-2">• Développement d'exploits</li>
+                                    <li class="mb-2">• Cryptographie appliquée</li>
+                                    <li class="mb-2">• Techniques d'anonymat</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Members Section -->
+    <section id="membres" class="py-20 bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Cellules <span class="text-red-600">Opérationnelles</span></h2>
+                <div class="w-24 h-1 bg-red-600 mx-auto mb-6"></div>
+                <p class="text-gray-400 max-w-3xl mx-auto">
+                    BLACKROOT opère par petits groupes spécialisés pour maintenir l'agilité et la sécurité opérationnelle.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Cellule 1 -->
+                <div class="bg-gray-900 rounded-lg overflow-hidden transition-transform hover:scale-105">
+                    <div class="relative h-48">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/78ffb5a0-7321-4ace-a9e5-a6baaf8925ab.png" alt="Équipe de hackers travaillant dans une salle sombre avec multiples écrans affichant du code, lumière bleue et rouge ambiance cyberpunk" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black opacity-50"></div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h3 class="text-xl font-bold text-white">Cellule Alpha</h3>
+                            <span class="text-sm text-red-400">Recherche & Développement</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 mb-4">
+                            Spécialisée dans le développement d'outils sur mesure et la recherche de vulnérabilités 0-day.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">Python</span>
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">Exploit Dev</span>
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">Reverse Eng.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cellule 2 -->
+                <div class="bg-gray-900 rounded-lg overflow-hidden transition-transform hover:scale-105">
+                    <div class="relative h-48">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/888a1b36-49d9-43d3-a5a2-9e0014c4b0a0.png" alt="Hacker en hoodie assis devant plusieurs écrans montrant des lignes de code et des diagrammes de réseau, lumière verte ambiance cybernétique" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black opacity-50"></div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h3 class="text-xl font-bold text-white">Cellule Omega</h3>
+                            <span class="text-sm text-red-400">Opérations Spéciales</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 mb-4">
+                            Intervention sur des systèmes critiques et missions sensibles nécessitant discrétion absolue.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">OSINT</span>
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">Social Eng.</span>
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">Physical</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cellule 3 -->
+                <div class="bg-gray-900 rounded-lg overflow-hidden transition-transform hover:scale-105">
+                    <div class="relative h-48">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0621942e-43ca-4eee-af4c-1bf787e34d96.png" alt="Tableau d'affichage rempli de notes codées et diagrammes de connexion réseau, ambiance laboratoire secret high-tech" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black opacity-50"></div>
+                        <div class="absolute bottom-0 left-0 p-4">
+                            <h3 class="text-xl font-bold text-white">Cellule Sigma</h3>
+                            <span class="text-sm text-red-400">Protection & Defense</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 mb-4">
+                            Sécurisation des infrastructures membres et contre-surveillance des opérations adverses.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">Hardening</span>
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">Incident Resp.</span>
+                            <span class="bg-gray-800 text-xs text-white px-3 py-1 rounded-full">Forensics</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leadership Section -->
+    <section id="leadership" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-12">Dirigé par <span class="text-red-600">Joker</span> et son équipe</h2>
+            
+            <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-8">
+                <!-- Joker Card -->
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <div class="w-32 h-32 mx-auto mb-4 rounded-full border-2 border-red-600 overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/01535a35-e879-414a-872d-8978ceed28d0.png" alt="Joker - Leader Senior de BLACKROOT" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-white">Joker</h3>
+                    <p class="text-red-400 mb-2">Leader Senior</p>
+                    <p class="text-gray-400">15 ans d'expérience en cybersécurité offensive. Spécialiste des systèmes critiques.</p>
+                </div>
+                
+                <!-- Member 1 -->
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <div class="w-32 h-32 mx-auto mb-4 rounded-full border-2 border-green-600 overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b8a7a2da-7b69-456e-b3f2-f538b6046f32.png" alt="Ghost - Responsable Opérations" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-white">Ghost</h3>
+                    <p class="text-green-400 mb-2">Responsable Opérations</p>
+                    <p class="text-gray-400">Expert en anonymat et infiltration. Chef de la cellule Omega.</p>
+                </div>
+                
+                <!-- Member 2 -->
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <div class="w-32 h-32 mx-auto mb-4 rounded-full border-2 border-yellow-600 overflow-hidden">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/bb387ff7-28ac-4b26-bb3a-d0d9509b83c4.png" alt="Raven - Responsable R&D" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-white">Raven</h3>
+                    <p class="text-yellow-400 mb-2">Responsable R&D</p>
+                    <p class="text-gray-400">Génie du développement d'exploits. Chef de la cellule Alpha.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section id="contact" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/2 bg-gray-900 p-8">
+                        <h2 class="text-2xl font-bold text-white mb-6">Processus de <span class="text-red-600">Recrutement</span></h2>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-white mb-2">1. Évaluation Initiale</h3>
+                            <p class="text-gray-400">
+                                Soumettez votre demande avec références vérifiables. Notre équipe effectuera un screening de sécurité.
+                            </p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-white mb-2">2. Épreuves Techniques</h3>
+                            <p class="text-gray-400">
+                                Accès à notre plateforme d'évaluation avec défis progressifs en sécurité offensive/défensive.
+                            </p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-white mb-2">3. Vetting Final</h3>
+                            <p class="text-gray-400">
+                                Entretien personnalisé avec la cellule de sécurité interne. 80% des candidats sont rejetés à ce stade.
+                            </p>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-700">
+                            <p class="text-gray-400">
+                                Seuls les meilleurs sont sélectionnés. Le processus complet prend entre 2 et 6 mois.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-1/2 p-8">
+                        <h3 class="text-xl font-bold text-white mb-6">Formulaire de Pré-Candidature</h3>
+                        
+                        <form id="registrationForm" class="space-y-4">
+                            <div>
+                                <label for="pseudo" class="block text-sm font-medium text-gray-400 mb-1">Pseudo</label>
+                                <input type="text" id="pseudo" name="pseudo" required class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Votre identifiant cryptique">
+                            </div>
+                            
+                            <div>
+                                <label for="key" class="block text-sm font-medium text-gray-400 mb-1">Clé d'Accès</label>
+                                <input type="password" id="key" name="key" required class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Code d'invitation (si vous en avez un)">
+                            </div>
+                            
+                            <div>
+                                <label for="proof" class="block text-sm font-medium text-gray-400 mb-1">Preuves de Compétences</label>
+                                <textarea id="proof" name="proof" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="CTFs remportés, CVE trouvées, projets notables..."></textarea>
+                            </div>
+                            
+                            <div>
+                                <label for="contact" class="block text-sm font-medium text-gray-400 mb-1">Méthode de Contact Sécurisée</label>
+                                <input type="text" id="contact" name="contact" required class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="PGP, Signal, Session...">
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-600 rounded bg-gray-700">
+                                <label for="terms" class="ml-2 block text-sm text-gray-400">
+                                    J'accepte les protocoles de sécurité et comprends que les fausses informations entraîneront un bannissement permanent.
+                                </label>
+                            </div>
+                            
+                            <div>
+                                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-md transition">
+                                    Soumettre la Candidature
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black opacity-75"></div>
+        <div class="relative max-w-md mx-auto bg-gray-800 rounded-lg shadow-xl mt-20">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-white">Connexion Sécurisée</h3>
+                    <button id="closeLoginModal" class="text-gray-400 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dot dot-red"></div>
+                            <div class="terminal-dot dot-yellow"></div>
+                            <div class="terminal-dot dot-green"></div>
+                            <span class="text-gray-300 ml-2 text-sm">auth@blackroot:~</span>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="text-green-400 mb-2">Initializing secure login protocol...</div>
+                            <div class="text-green-400 mb-2">Generating ephemeral keys...</div>
+                            <div class="text-green-400">TLS 1.3 handshake completed</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label for="login" class="block text-sm font-medium text-gray-400 mb-1">Identifiant Membre</label>
+                        <input type="text" id="login" name="login" required class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="root@cell-[X]">
+                    </div>
+                    
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-400 mb-1">Mot de Passe </label>
+                        <input type="password" id="password" name="password" required class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="••••••••">
+                    </div>
+                    
+                    <div>
+                        <label for="otp" class="block text-sm font-medium text-gray-400 mb-1">Code OTP</label>
+                        <input type="text" id="otp" name="otp" required class="w-full bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="6 chiffres">
+                    </div>
+                    
+                    <div>
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-md transition">
+                            Authentification Multifacteur
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-6 text-center text-xs text-gray-500">
+                    <p>En cas de compromission, utilisez immédiatement notre canal de secours via Tor.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Money Section -->
+    <section id="money" class="py-20 bg-gradient-to-b from-gray-800 to-green-900">
+        <!-- Revenus en temps réel -->
+        <div class="container mx-auto px-4 mb-12">
+            <div class="max-w-4xl mx-auto bg-gray-900 rounded-xl p-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-4 text-center">Revenus en Temps Réel <span class="text-blue-400">Live</span></h2>
+                <div class="grid md:grid-cols-3 gap-4 text-center">
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <p class="text-blue-400 text-sm mb-1">Visiteurs actuels</p>
+                        <p class="text-3xl font-bold text-white" id="currentVisitors">0</p>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <p class="text-green-400 text-sm mb-1">Revenus totaux</p>
+                        <p class="text-3xl font-bold text-white" id="totalRevenue">0€</p>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <p class="text-yellow-400 text-sm mb-1">Conversions</p>
+                        <p class="text-3xl font-bold text-white" id="conversions">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Revenus en temps réel -->
+        <div class="container mx-auto px-4 mb-12">
+            <div class="max-w-4xl mx-auto bg-gray-900 rounded-xl p-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-4 text-center">Revenus en Temps Réel <span class="text-blue-400">Live</span></h2>
+                <div class="grid md:grid-cols-3 gap-4 text-center">
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <p class="text-blue-400 text-sm mb-1">Visiteurs actuels</p>
+                        <p class="text-3xl font-bold text-white" id="currentVisitors">0</p>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <p class="text-green-400 text-sm mb-1">Revenus totaux</p>
+                        <p class="text-3xl font-bold text-white" id="totalRevenue">0€</p>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <p class="text-yellow-400 text-sm mb-1">Conversions</p>
+                        <p class="text-3xl font-bold text-white" id="conversions">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto bg-gray-900 rounded-xl p-8 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Générez des revenus avec <span class="text-green-400">BLACKROOT</span></h2>
+                
+                <div class="bg-gray-800 rounded-lg p-6 mb-8">
+                    <h3 class="text-2xl font-bold text-green-400 mb-4">Prime de 50,000$ (25,000,000 FC)</h3>
+                    <p class="text-gray-300 mb-4">
+                        Offre spéciale pour les premiers membres qui complètent avec succès leur formation Elite.
+                        Prime convertible uniquement après validation finale des compétences.
+                    </p>
+                    <ul class="text-left text-gray-400 space-y-2 mb-6">
+                        <li>• Prime versée en cryptomonnaie stable (USDT)</li>
+                        <li>• Conversion possible en FC à taux avantageux</li>
+                        <li>• Paiement après vérification des compétences</li>
+                    </ul>
+                    <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded transition">
+                        Postuler pour la Prime
+                    </button>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 mb-8">
+                    <h3 class="text-2xl font-bold text-red-400 mb-4">Mission Spéciale: Testeurs Payés</h3>
+                    <p class="text-gray-300 mb-4">
+                        Nous recherchons des testeurs pour nos nouveaux outils. Rémunération: 500-2000€ par test réussi.
+                    </p>
+                    <div class="text-left text-gray-400 space-y-2 mb-6">
+                        <p class="font-bold">Conditions:</p>
+                        <li>• Compte sécurisé vérifié</li>
+                        <li>• Expérience en pentesting</li>
+                        <li>• Paiement en crypto uniquement</li>
+                    </div>
+                    <button class="bg-red-600 hover:bg-red-7 00 text-white font-bold py-3 px-8 rounded transition">
+                        Postuler comme Testeur
+                    </button>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-2xl font-bold text-blue-400 mb-4">Recherche Sociale Rémunérée</h3>
+                    <p class="text-gray-300 mb-4">
+                        Gagnez en consultant des vidéos et en recherchant des personnes. Rémunération: 10-50€ par tâche.
+                    </p>
+                    <div class="text-left text-gray-400 space-y-2 mb-6">
+                        <p class="font-bold">Conditions:</p>
+                        <li>• Connaissances informatiques de base</li>
+                        <li>• Accès à un ordinateur sécurisé</li>
+                        <li>• Disponibilité 5h/semaine minimum</li>
+                    </div>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded transition">
+                        Postuler pour la Recherche
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-6 md:mb-0">
+                    <div class="bg-red-600 w-3 h-3 rounded-full mr-2"></div>
+                    <div class="bg-yellow-500 w-3 h-3 rounded-full mr-2"></div>
+                    <div class="bg-green-500 w-3 h-3 rounded-full mr-2"></div>
+                    <span class="text-white font-bold">BLACKROOT</span>
+                </div>
+                
+                <div class="flex space-x-6 mb-6 md:mb-0">
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                </div>
+                
+                <div class="text-sm text-gray-400 text-center">
+                    <p>BLACKROOT Security Collective - Tous canaux chiffrés</p>
+                    <p class="mt-1">© 2023 BLACKROOT Opérations. Aucun droit accordé.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Revenus en temps réel
+        let visitors = 0;
+        let revenue = 0;
+        let conversions = 0;
+        
+        function updateStats() {
+            // Simulate new visitors
+            const newVisitors = Math.floor(Math.random() * 3);
+            visitors += newVisitors;
+            
+            // 5% conversion rate
+            if(Math.random() < 0.05) {
+                conversions++;
+                revenue += Math.floor(20 + Math.random() * 50); // 20-70€ per conversion
+            }
+            
+            document.getElementById('currentVisitors').textContent = visitors;
+            document.getElementById('totalRevenue').textContent = revenue + '€';
+            document.getElementById('conversions').textContent = conversions;
+            
+            setTimeout(updateStats, 3000); // Update every 3 seconds
+        }
+        
+        // Initialize stats
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Login modal
+        const loginButtons = document.querySelectorAll('a[href="#login"]');
+        const loginModal = document.getElementById('loginModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        
+        loginButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Registration form handling
+        const registrationForm = document.getElementById('registrationForm');
+        registrationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Simulate form submission
+            const submitButton = registrationForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Traitement sécurisé...';
+            
+            setTimeout(() => {
+                alert('Demande soumise. Nos agents vous contacteront via le canal sécurisé spécifié dans les 72h si votre profil est retenu. Effacez maintenant cette page de votre historique.');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Soumettre la Candidature';
+                registrationForm.reset();
+            }, 2000);
+        });
+        
+        // Login form handling
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const submitButton = loginForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Vérification en cours...';
+            
+            setTimeout(() => {
+                alert('[ERREUR] Identifiants invalides ou session compromise. Veuillez utiliser le canal de secours.');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Authentification Multifacteur';
+                loginForm.reset();
+                loginModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 2000);
+        });
+        
+        // Terminal animation
+        const terminalBody = document.querySelector('.terminal-body');
+        const commandLines = [
+            { command: "scan_target --ip-range 192.168.1.0/24", response: "3 systèmes vulnérables identifiés", delay: 2000 },
+            { command: "exploit --target 192.168.1.23 --module CVE-2021-1234", response: "Accès root obtenu via buffer overflow", delay: 2500 },
+            { command: "deploy_backdoor --stealth --persistence", response: "Backdoor masquée déployée avec succès", delay: 3000 },
+            { command: "clean_logs --all --overwrite 7", response: "Toutes les traces effacées", delay: 1500 }
+        ];
+        
+        let lineIndex = 0;
+        
+        function addTerminalLines() {
+            if (lineIndex < commandLines.length) {
+                const line = commandLines[lineIndex];
+                
+                const commandElement = document.createElement('div');
+                commandElement.className = 'command-line';
+                commandElement.innerHTML = `
+                    <span class="prompt">root@blackroot:~#</span> 
+                    <span class="text-white">${line.command}</span>
+                    <span class="cursor">_</span>
+                `;
+                
+                terminalBody.appendChild(commandElement);
+                
+                setTimeout(() => {
+                    commandElement.querySelector('.cursor').remove();
+                    
+                    const responseElement = document.createElement('div');
+                    responseElement.className = 'text-green-400 mb-2';
+                    responseElement.textContent = line.response;
+                    terminalBody.appendChild(responseElement);
+                    
+                    lineIndex++;
+                    addTerminalLines();
+                }, line.delay);
+            } else {
+                // Loop animation
+                setTimeout(() => {
+                    terminalBody.innerHTML = `
+                        <div class="command-line">
+                            <span class="prompt">root@blackroot:~#</span> 
+                            <span class="text-white">init_system</span>
+                            <span class="cursor">_</span>
+                        </div>
+                        <div class="text-green-400 mb-2">Système BLACKROOT initialisé...</div>
+                        <div class="command-line">
+                            <span class="prompt">root@blackroot:~#</span> 
+                            <span class="text-white">check_auth</span>
+                            <span class="cursor">_</span>
+                        </div>
+                        <div class="text-green-400 mb-2">Authentification sécurisée active</div>
+                        <div class="command-line">
+                            <span class="prompt">root@blackroot:~#</span> 
+                            <span class="text-white">verify_secure_channel</span>
+                            <span class="cursor">_</span>
+                        </div>
+                        <div class="text-green-400 mb-2">Channel chiffré établi - Secure Shell 3.0</div>
+                        <div class="command-line">
+                            <span class="prompt">root@blackroot:~#</span> 
+                            <span class="text-white">connect_user_session</span>
+                            <span class="cursor">_</span>
+                        </div>
+                        <div class="text-green-400 mb-2">Bienvenue visiteur. Accès restreint détecté.</div>
+                    `;
+                    lineIndex = 0;
+                    setTimeout(addTerminalLines, 5000);
+                }, 3000);
+            }
+        }
+        
+        // Start terminal animation after initial commands display
+        setTimeout(addTerminalLines, 8000);
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#login') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>S'inscrire - BLACKROOT</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>BLACKROOT</h1>
+    <p>"Le futur appartient aux invisibles."</p>
+  </header>
+
+  <main>
+    <h2>Inscription</h2>
+    <form onsubmit="return Register();">
+      <label>Nom de code :</label>
+      <input type="text" required placeholder="NeoH4x0r" />
+
+      <label>Adresse e-mail :</label>
+      <input type="email" required placeholder="anonymous@mail.com" />
+
+      <label>Mot de passe :</label>
+      <input type="password" required placeholder="********" />
+
+      <button type="submit">S'inscrire</button>
+    </form>
+
+    <p class="quote">
+      "L'identité est un choix, pas une donnée." – BLACKROOT
+    </p>
+  </main>
+
+  <footer>
+    &copy; 2025 BLACKROOT | <a href="index.html">Retour à l'accueil</a>
+  </footer>
+
+  <script>
+    function fakeRegister() {
+      alert("Merci pour ton inscription. Le Senior Joker te contactera bientôt.");
+      return false; // empêche l'envoi réel
+    }
+  </script>
+</body>
+</html>
